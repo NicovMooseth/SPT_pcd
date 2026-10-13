@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Point clouds and results (data/ stays as an empty folder)
+data/*
+!data/.gitkeep
+*.pcd
+*.ply
+output/
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store

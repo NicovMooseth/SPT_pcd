@@ -1,0 +1,10 @@
+# Requires Python >= 3.10. CPU-only torch.
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+numpy
+scipy
+matplotlib
+open3d
+pyvista
+torch
