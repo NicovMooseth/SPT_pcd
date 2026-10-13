@@ -11,7 +11,7 @@ import numpy as np
 
 class EnvParams:
     # --- Input --------------------------------------------------------
-    PCD_PATH = "data/map.pcd"           # point cloud (.pcd/.ply/...); override with `python main.py --pcd <path>`
+    PCD_PATH = "data/map.pcd"           # point cloud
 
     # --- Obstacle inflation -------------------------------------------
     OBSTACLE_INFLATION = 0.15           # [m] robot radius + safety margin: everything closer than this to an

@@ -132,8 +132,6 @@ class EsdfEnvironment:
                              for a in np.radians(np.arange(0, 360, 10))]
         best_up = max(candidates, key=score)
         R = _rotation_from_to(best_up, z_axis)
-        print(f"Point cloud tilt: {np.degrees(np.arccos(np.clip(best_up[2], -1, 1))):.1f}°  "
-              f"(horizontal + vertical surfaces: {100 * score(z_axis):.0f} % -> {100 * score(best_up):.0f} %)")
 
         # 3. Yaw: wall normals (horizontal after step 2), angle modulo 90°
         if align_yaw:
@@ -145,11 +143,9 @@ class EsdfEnvironment:
             yaw = yaw - 90 if yaw > 45 else yaw
             c, s = np.cos(np.radians(yaw)), np.sin(np.radians(yaw))
             R = np.array([[c, s, 0], [-s, c, 0], [0, 0, 1]]) @ R
-            print(f"Dominant wall direction: {yaw:.1f}° -> rotated onto the x-axis")
 
         # 4. Floor at z = 0: lowest large horizontal plane
         ground, n_planes = _floor_height(np.asarray(ds.points) @ R[2], np.abs(normals @ R[2]) > 0.95)
-        print(f"Floor height: {ground:.2f} m (lowest of {n_planes} large horizontal layers) -> z = 0")
 
         T = np.eye(4)
         T[:3, :3] = R
@@ -163,9 +159,6 @@ class EsdfEnvironment:
                                                 return_inverse=True, return_counts=True)
         kept_layers = layers[counts >= min_fraction * len(points)]
         keep = counts[layer_of_pt.ravel()] >= min_fraction * len(points)
-        print(f"Height filter: {len(layers) - len(kept_layers)} of {len(layers)} layers below "
-              f"{100 * min_fraction:g} %, removed {np.sum(~keep)} points ({100 * np.mean(~keep):.2f} %); "
-              f"kept z = {kept_layers[0] * bin_size:.1f} … {(kept_layers[-1] + 1) * bin_size:.1f} m")
         return keep
 
     def _compute_esdf(self, points, voxel_size):
@@ -215,8 +208,6 @@ class EsdfEnvironment:
         # Pad to a multiple of f so the grid splits into whole regions
         col = np.pad(occupied.any(axis=2), ((0, -nx % f), (0, -ny % f)))
         region_has_points = col.reshape(col.shape[0] // f, f, col.shape[1] // f, f).any(axis=(1, 3))
-        print(f"Unexplored regions ({f * voxel_size:.2f} m): {np.sum(~region_has_points)} of "
-              f"{region_has_points.size} ({100 * np.mean(~region_has_points):.1f} %) without points -> obstacle")
         return np.repeat(np.repeat(~region_has_points, f, axis=0), f, axis=1)[:nx, :ny]
 
     # ------------------------------------------------------------------
